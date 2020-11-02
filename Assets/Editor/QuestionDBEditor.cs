@@ -1,5 +1,8 @@
-﻿using UnityEditor;
+﻿using System;
+using System.IO;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 [CustomEditor(typeof(QuestionDatabase))]
 public class QuestionDBEditor : Editor
@@ -14,6 +17,7 @@ public class QuestionDBEditor : Editor
     public override void OnInspectorGUI()
     {
         GUILayout.BeginHorizontal();
+        
 
         if (GUILayout.Button("Remove"))
         {
@@ -39,5 +43,6 @@ public class QuestionDBEditor : Editor
 
         base.OnInspectorGUI();
     }
+  
 }
 

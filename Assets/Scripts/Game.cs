@@ -44,13 +44,13 @@ public class Game : MonoBehaviour
 
     void Start()
     {
+
         coins = PlayerPrefs.GetInt("coinsCount", 10);
         coins = 50;//закомментить
         coinsText.text = coins.ToString();
 
         inGameTime = 15;
         canTiming = false;
-
         lives = PlayerPrefs.GetInt("livesCount", 3);
         //lives = 3;//закомментить
         livesText.text = lives.ToString();
@@ -72,8 +72,6 @@ public class Game : MonoBehaviour
     {
         if (lives <= 0)//таймер для жизней
         {
-            timerLivesText.gameObject.SetActive(true);
-
             timeUntilLives -= Time.deltaTime;
             updateCountDownText();
 
@@ -111,7 +109,9 @@ public class Game : MonoBehaviour
         {
             endTime = inGameTime + System.DateTime.Now.Second;
             afterPause = true;
+            TimerMaster.instance.SaveDate();
         }
+        
     }
 
 
@@ -142,14 +142,23 @@ public class Game : MonoBehaviour
 
     public void OnClickPlayButton()
     {
-        mainPanel.SetActive(false);
-        GetCategories();
-        categoryPanel.SetActive(true);
+        if (lives > 0)
+        {
+            mainPanel.SetActive(false);
+            GetCategories();
+            categoryPanel.SetActive(true);
+        }
+        else
+        {
+            StartCoroutine(showToast("Недостаточно жизней", 1));
+        }
+
     }
 
 
     private void QuestionGenerate()
     {
+        doubleChance = false;
         for (int i = 0; i < 4; i++)
         {
             answersButtons[i].gameObject.SetActive(true);
@@ -190,19 +199,11 @@ public class Game : MonoBehaviour
 
     public void OnClickCategoryButton(Text text)
     {
+        currentCategory = text.text;//определяем, какая категория была выбрана
 
-        if (lives > 0)
-        {
-            currentCategory = text.text;//определяем, какая категория была выбрана
+        allQuestionsForConcreteCategoryDataList = questionDatabase.GetAllElementsForConcreteCategory(currentCategory);// извлекаем вопросы для конкретной категории
 
-            allQuestionsForConcreteCategoryDataList = questionDatabase.GetAllElementsForConcreteCategory(currentCategory);// извлекаем вопросы для конкретной категории
-
-            QuestionGenerate();
-        }
-        else
-        {
-            StartCoroutine(showToast("Недостаточно жизней", 1));
-        }
+        QuestionGenerate();
     }
 
     public void OnClickAnswersButtons(Text text)
@@ -233,7 +234,7 @@ public class Game : MonoBehaviour
         }
     }
 
-  
+
 
     private void ExitOnMainMenuOrQuestionGenerate()
     {
@@ -242,6 +243,7 @@ public class Game : MonoBehaviour
             canTiming = false;
             mainPanel.SetActive(true);
             gamePanel.SetActive(false);
+            timerLivesText.gameObject.SetActive(true);
         }
         else
         {
@@ -257,7 +259,7 @@ public class Game : MonoBehaviour
         }
     }
 
-   
+
 
 
     IEnumerator TrueOrFalse(bool check)

@@ -14,6 +14,7 @@ public class QuestionDatabase : ScriptableObject
 
     private int currentIndex = 0;
 
+
     public void AddElement()
     {
         if (questionsList == null) questionsList = new List<QuestionsData>();
@@ -51,6 +52,16 @@ public class QuestionDatabase : ScriptableObject
         if (currentIndex > 0)
             currentIndex--;
         currentQuestion = this[currentIndex];
+        return currentQuestion;
+    }
+
+    public QuestionsData GetConcrete(int index)
+    {
+        if (index >= 0 && index <= questionsList.Count)
+        {
+            currentIndex = index;
+            currentQuestion = this[currentIndex];
+        }
         return currentQuestion;
     }
 
@@ -147,7 +158,7 @@ public class QuestionsData
     }
 
     [Tooltip("Ответы")]
-    [SerializeField] private string[] answers;
+    [SerializeField] private string[] answers = new string[4];
     public string[] Answers
     {
         get
