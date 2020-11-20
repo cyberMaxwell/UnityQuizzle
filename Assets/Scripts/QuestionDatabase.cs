@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Database/Questions", fileName = "Questions")]
 public class QuestionDatabase : ScriptableObject
 {
-    [SerializeField, HideInInspector] List<QuestionsData> questionsList;
+    [SerializeField, HideInInspector]    List<QuestionsData> questionsList;
 
     [SerializeField] private QuestionsData currentQuestion;
 
@@ -63,6 +63,14 @@ public class QuestionDatabase : ScriptableObject
             currentQuestion = this[currentIndex];
         }
         return currentQuestion;
+    }
+
+    public void ResetAllWas()
+    {
+        for(int i = 0; i < questionsList.Count; i++)
+        {
+            questionsList[i].WasQ = false;
+        }
     }
 
     public void ClearDatabase()
@@ -155,6 +163,19 @@ public class QuestionsData
             return question;
         }
         protected set { }
+    }
+
+    [Tooltip("Этот вопрос был?")]
+    [SerializeField] private bool wasQ;
+    public bool WasQ
+    {
+        get
+        {
+            return wasQ;
+        }
+        set {
+            wasQ = value;
+        }
     }
 
     [Tooltip("Ответы")]

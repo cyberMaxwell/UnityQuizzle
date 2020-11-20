@@ -38,6 +38,10 @@ public class QuestionDBEditor : Editor
         {
             database.GetNext();
         }
+        if (GUILayout.Button("ResetAllWas"))
+        {
+            database.ResetAllWas();
+        }
 
         GUILayout.EndHorizontal();
 

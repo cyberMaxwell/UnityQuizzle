@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.Advertisements;
 using UnityEngine.UI;
 
 public class Game : MonoBehaviour
@@ -32,10 +32,14 @@ public class Game : MonoBehaviour
     int lives;
     int coins;
     int randElement;
+    int adsCount = 0;
     float endTime;
     float inGameTime;
     bool canTiming;
     bool doubleChance;
+    bool inAds;
+
+
 
     string currentCategory;
 
@@ -44,9 +48,15 @@ public class Game : MonoBehaviour
 
     void Start()
     {
+        if (Advertisement.isSupported)
+        {
+            Advertisement.Initialize("3898513", false);
+        }
+
+
 
         coins = PlayerPrefs.GetInt("coinsCount", 10);
-        coins = 50;//закомментить
+        //coins = 50;//закомментить
         coinsText.text = coins.ToString();
 
         inGameTime = 15;
@@ -62,10 +72,12 @@ public class Game : MonoBehaviour
         }
     }
 
+
     private void Update()
     {
         LivesTimer();
         InGameTimer();
+
     }
 
     private void LivesTimer()
@@ -111,7 +123,7 @@ public class Game : MonoBehaviour
             afterPause = true;
             TimerMaster.instance.SaveDate();
         }
-        
+
     }
 
 
@@ -144,20 +156,26 @@ public class Game : MonoBehaviour
     {
         if (lives > 0)
         {
-            mainPanel.SetActive(false);
             GetCategories();
+            mainPanel.SetActive(false);
             categoryPanel.SetActive(true);
         }
         else
         {
             StartCoroutine(showToast("Недостаточно жизней", 1));
         }
-
     }
 
 
     private void QuestionGenerate()
     {
+        adsCount++;
+        if (Advertisement.IsReady() && adsCount == 5)
+        {
+            Advertisement.Show("video");
+            adsCount = 0;
+        }
+
         doubleChance = false;
         for (int i = 0; i < 4; i++)
         {
@@ -169,7 +187,7 @@ public class Game : MonoBehaviour
             hintsButtons[i].gameObject.SetActive(true);
         }
 
-        if (allQuestionsForConcreteCategoryDataList.Count > 0)
+        if (allQuestionsForConcreteCategoryDataList.Count > 0)//возможно стоит сделать, чтобы категории, в которых нет вопросов не отображались(но вряд ли кто-то пройдет все вопросы)
         {
             canTiming = true;
             inGameTime = 15;
@@ -179,15 +197,25 @@ public class Game : MonoBehaviour
 
             randElement = Random.Range(0, allQuestionsForConcreteCategoryDataList.Count);//случайный индекс вопроса
 
-            questionText.text = allQuestionsForConcreteCategoryDataList[randElement].Question;//выводим вопрос на экран
-
-            List<string> answers = new List<string>(allQuestionsForConcreteCategoryDataList[randElement].Answers);//лист с ответами для текущего вопроса
-
-            for (int i = 0; i < 4; i++)
+            if (!allQuestionsForConcreteCategoryDataList[randElement].WasQ)//если вопроса не было, то отобразить его
             {
-                int rand = Random.Range(0, answers.Count);
-                textAnswers[i].text = answers[rand];
-                answers.RemoveAt(rand);
+                allQuestionsForConcreteCategoryDataList[randElement].WasQ = true;
+
+                questionText.text = allQuestionsForConcreteCategoryDataList[randElement].Question;//выводим вопрос на экран
+
+                List<string> answers = new List<string>(allQuestionsForConcreteCategoryDataList[randElement].Answers);//лист с ответами для текущего вопроса
+
+                for (int i = 0; i < 4; i++)
+                {
+                    int rand = Random.Range(0, answers.Count);
+                     textAnswers[i].text = answers[rand];
+                    answers.RemoveAt(rand);
+                }
+            }
+            else
+            {
+                allQuestionsForConcreteCategoryDataList.RemoveAt(randElement);
+                QuestionGenerate();
             }
         }
         else
@@ -196,6 +224,7 @@ public class Game : MonoBehaviour
             mainPanel.SetActive(true);
         }
     }
+
 
     public void OnClickCategoryButton(Text text)
     {
@@ -271,7 +300,7 @@ public class Game : MonoBehaviour
             inGameTime = 15;
             canTiming = false;
             //добавить анимацию для правильного ответа
-            yield return new WaitForSeconds(1f);
+            //yield return new WaitForSeconds(1f);
             questionText.text = "верно";
             coins += 5;
             SetCoins();
@@ -285,7 +314,7 @@ public class Game : MonoBehaviour
             canTiming = false;
             inGameTime = 15;
             //добавить анимацию для неправильного ответа
-            yield return new WaitForSeconds(1f);
+            //yield return new WaitForSeconds(1f);
             --lives;
             SetLives();
 
