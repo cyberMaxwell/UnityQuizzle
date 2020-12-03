@@ -23,11 +23,8 @@ public class ChangeVolume : MonoBehaviour
     public void SetVolume(float vol)
     {
         volume = vol;
-    }
-
-    private void OnApplicationQuit()
-    {
         PlayerPrefs.SetFloat("volume", volume);
         PlayerPrefs.Save();
     }
+
 }

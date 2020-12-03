@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Advertisements;
 using UnityEngine.UI;
+using TMPro;
 
 public class Game : MonoBehaviour
 {
@@ -12,14 +13,14 @@ public class Game : MonoBehaviour
     public GameObject hintsPanel;
 
     public Text toastText;
-    public Text livesText;
-    public Text coinsText;
-    public Text questionText;
-    public Text timerLivesText;
-    public Text inGameTimeText;
+    public TextMeshProUGUI livesText;
+    public TextMeshProUGUI coinsText;
+    public TextMeshProUGUI questionText;
+    public TextMeshProUGUI timerLivesText;
+    public TextMeshProUGUI inGameTimeText;
 
-    public Text[] textCategory = new Text[3];
-    public Text[] textAnswers = new Text[4];
+    public TextMeshProUGUI[] textCategory = new TextMeshProUGUI[3];
+    public TextMeshProUGUI[] textAnswers = new TextMeshProUGUI[4];
 
     public Button[] hintsButtons = new Button[3];
     public Button[] answersButtons = new Button[4];
@@ -39,8 +40,6 @@ public class Game : MonoBehaviour
     bool doubleChance;
     bool inAds;
 
-
-
     string currentCategory;
 
     float timeUntilLives = 20;
@@ -48,12 +47,11 @@ public class Game : MonoBehaviour
 
     void Start()
     {
+
         if (Advertisement.isSupported)
         {
             Advertisement.Initialize("3898513", false);
         }
-
-
 
         coins = PlayerPrefs.GetInt("coinsCount", 10);
         //coins = 50;//закомментить
@@ -226,7 +224,7 @@ public class Game : MonoBehaviour
     }
 
 
-    public void OnClickCategoryButton(Text text)
+    public void OnClickCategoryButton(TextMeshProUGUI text)
     {
         currentCategory = text.text;//определяем, какая категория была выбрана
 
@@ -235,7 +233,7 @@ public class Game : MonoBehaviour
         QuestionGenerate();
     }
 
-    public void OnClickAnswersButtons(Text text)
+    public void OnClickAnswersButtons(TextMeshProUGUI text)
     {
         if (doubleChance && text.text != allQuestionsForConcreteCategoryDataList[randElement].Answers[0])//если текст на кнопке не равен правильному ответу 
         {
