@@ -239,7 +239,7 @@ public class Game : MonoBehaviour
         {
             for (int i = 0; i < 4; i++)
             {
-                if (answersButtons[i].GetComponentInChildren<Text>().text == text.text)//если текст на дочернем элементе равен тексту на кнопке
+                if (answersButtons[i].GetComponentInChildren<TextMeshProUGUI>().text == text.text)//если текст на дочернем элементе равен тексту на кнопке
                 {
                     answersButtons[i].gameObject.SetActive(false);//скрыть кнопку
                 }
@@ -299,7 +299,7 @@ public class Game : MonoBehaviour
             canTiming = false;
             //добавить анимацию для правильного ответа
             //yield return new WaitForSeconds(1f);
-            questionText.text = "верно";
+            questionText.text = "Верно";
             coins += 5;
             SetCoins();
             yield return new WaitForSeconds(0.5f);
@@ -316,7 +316,7 @@ public class Game : MonoBehaviour
             --lives;
             SetLives();
 
-            questionText.text = "неверно";
+            questionText.text = "Неверно";
             yield return new WaitForSeconds(0.5f);
             ExitOnMainMenuOrQuestionGenerate();
             yield break;
